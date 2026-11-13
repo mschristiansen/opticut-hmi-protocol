@@ -46,8 +46,8 @@ def parse(stream):
 
 
 def compact(xml):
-    """One line, as the vendor software sends it: drop indentation between tags."""
-    return re.sub(rb">\s*\n\s*<", b"><", xml).rstrip(b"\r\n")
+    """One line plus the final newline, as list files are: drop indentation between tags."""
+    return re.sub(rb">\s*\n\s*<", b"><", xml)
 
 
 def upload_bytes(xml):

@@ -94,7 +94,9 @@ class AgainstFakeHMI(unittest.TestCase):
         oc.upload(hello_bytes(), LOCAL, self.hmi.port, pause=0.05, hold=0.2)
         self.assertIn("HELLO", self.hmi.lists)
         self.assertEqual(self.hmi.lists["HELLO"][2], oc.compact(hello_bytes()))
-        self.assertNotIn(b"\n", self.hmi.lists["HELLO"][2])
+        body = self.hmi.lists["HELLO"][2]
+        self.assertTrue(body.endswith(b"</Product>\n"))
+        self.assertEqual(body.count(b"\n"), 1)  # one line + final newline, like a list file
 
     def test_directory(self):
         d = oc.directory(LOCAL, self.hmi.port)
