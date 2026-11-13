@@ -55,8 +55,8 @@ class UploadBytes(unittest.TestCase):
         self.assertEqual(oc.parse(hello), [(45, 0, b"")])
         msgs = oc.parse(payload)
         self.assertEqual([(c, x, len(b)) for c, x, b in msgs],
-                         [(150, 0, len(xml)), (151, 0, 0)])
-        self.assertEqual(msgs[0][2], xml)
+                         [(150, 0, len(oc.compact(xml))), (151, 0, 0)])
+        self.assertEqual(msgs[0][2], oc.compact(xml))
 
     def test_non_list_is_refused(self):
         with self.assertRaises(ValueError):
@@ -93,7 +93,8 @@ class AgainstFakeHMI(unittest.TestCase):
     def test_hello_world_upload(self):
         oc.upload(hello_bytes(), LOCAL, self.hmi.port, pause=0.05, hold=0.2)
         self.assertIn("HELLO", self.hmi.lists)
-        self.assertEqual(self.hmi.lists["HELLO"][2], hello_bytes())
+        self.assertEqual(self.hmi.lists["HELLO"][2], oc.compact(hello_bytes()))
+        self.assertNotIn(b"\n", self.hmi.lists["HELLO"][2])
 
     def test_directory(self):
         d = oc.directory(LOCAL, self.hmi.port)

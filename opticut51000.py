@@ -45,13 +45,18 @@ def parse(stream):
     return out
 
 
+def compact(xml):
+    """One line, as the vendor software sends it: drop indentation between tags."""
+    return re.sub(rb">\s*\n\s*<", b"><", xml).rstrip(b"\r\n")
+
+
 def upload_bytes(xml):
     """The exact bytes of one list upload: (keepalive, 150 + 151)."""
     if isinstance(xml, str):
         xml = xml.encode("utf-8")
     if not re.search(rb"<Product>.*<Name>[^<]+</Name>.*</Product>", xml, re.S):
         raise ValueError("not a <Product> list document with a <Name>")
-    return frame(CMD_KEEPALIVE), frame(CMD_UPLOAD, xml) + frame(CMD_UPLOAD_END)
+    return frame(CMD_KEEPALIVE), frame(CMD_UPLOAD, compact(xml)) + frame(CMD_UPLOAD_END)
 
 
 def directory_entries(body):
