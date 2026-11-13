@@ -7,7 +7,7 @@
 Behaviour (SPEC §3):
   * it answers ONE connection at a time: the oldest live one (§3.3);
   * on that connection's first keepalive it pushes the directory (cmd 6, 122200 bytes);
-  * cmd 150 + 151 from ANY connection adds a list (store 2, next free id);
+  * cmd 150 + 151 from ANY connection adds a list (store from <Type>: 1 for MODE_SCHNITTFOLGE, else 2; next free id);
   * cmd 6 'e' from the served connection replies 150 (document) + 151 (1432-byte sidecar);
   * every other command is ignored; cmd 6 'i' is recorded in `ignored` and NOT executed.
 """
